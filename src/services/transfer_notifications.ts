@@ -1,4 +1,4 @@
-import { sendNotificationsToSlack } from "../api/slack/slack_notifications";
+import { sendMessage } from "../api/slack/slack_messages";
 import { fetchYouTrackNotifications } from "../api/youtrack/youtrack_notifications";
 import { SQLiteCache } from "../storage/sqlite_cache";
 import { config } from "../utils/config";
@@ -16,18 +16,18 @@ export async function transferNotifications(cache: SQLiteCache) {
     // Find notifications that weren't transferred yet
     const unknownNotifications = [];
     for (const notification of notifications) {
-        console.log(notification.id)
+        console.log(`YouTrack notification:${notification.id}`)
         if (cache.getNotificationId(notification.id) == null) {
             unknownNotifications.push(notification);
         }
     }
-
+    console.log(`List of unknown notifications: ${unknownNotifications}`);
     console.log(unknownNotifications);
 
     for (const notification of unknownNotifications) {
         // Decode content and transform it to markdown
         const markdownContent = HTMLToMarkdown(decodeField(notification.content));
-        await sendNotificationsToSlack(config.slack.channel, markdownContent);
+        await sendMessage(config.slack.channel, markdownContent);
         cache.insertNotification(notification.id);
     }
 

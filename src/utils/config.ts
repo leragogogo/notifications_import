@@ -21,6 +21,7 @@ export const config = {
     slack: {
         baseUrl: requireEnv("SLACK_BASE_URL"),
         token: requireEnv("SLACK_TOKEN"),
+        signingSecret: requireEnv("SLACK_SIGNING_SECRET"),
         channel: requireEnv("SLACK_CHANNEL"),
     }
 }

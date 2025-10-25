@@ -3,6 +3,8 @@ import { config } from "./utils/config";
 import { SQLiteCache } from "./storage/sqlite_cache";
 import { transferNotifications } from "./services/transfer_notifications";
 import { startPoller } from "./services/poller";
+import bodyParser from "body-parser";
+import { commandsHandler, interactionsHandler, slackAuth } from "./services/slack_commands";
 
 const app = express();
 
@@ -11,6 +13,18 @@ const cache = new SQLiteCache("./src/storage/cache.db");
 
 // Start poller that send notifications from YouTrack to Slack's channel
 const stopPoller = startPoller(transferNotifications, cache, { intervalMs: 60000 })
+
+// Keep rawBody to verify signature
+app.use(bodyParser.urlencoded({
+    extended: true,
+    verify: (req, _res, buf) => { (req as any).rawBody = buf.toString(); }
+}));
+
+// Commands handler endpoint 
+app.post("/slack/commands", slackAuth, commandsHandler);
+
+// Interactions handler endpoint 
+app.post("/slack/interactions", slackAuth, interactionsHandler);
 
 // Start server
 const server = app.listen(config.port, async () => {
