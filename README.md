@@ -2,6 +2,8 @@
 This service polls notifications from a YouTrack instance and sends them to a Slack channel.
 It supports a slash-command in Slack to create new YouTrack issues via modal interaction.
 
+A video demonstration: https://drive.google.com/file/d/1CpehkiVoguUe8jcBsWTraPvmn_wSbAMo/view?usp=drivesdk
+
 ## Architecture
 - A **poller** periodically retrieves notifications from YouTrack
 - A **local SQLiteCache** stores notification IDs already sent, so duplicates aren’t posted.
